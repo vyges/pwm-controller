@@ -1,0 +1,290 @@
+{
+  "$schema": "https://vyges.com/schema/v1/vyges-metadata.schema.json",
+  "x-version": "1.0.0",
+  "name": "vyges/pwm-controller",
+  "version": "1.0.0",
+  "description": "Configurable PWM controller with multiple channels and precise frequency control for motor control, power management, and signal generation applications.",
+  "license": "Apache-2.0",
+  "template": "vyges-ip-template@1.0.0",
+  "target": ["asic", "fpga"],
+  "design_type": ["digital"],
+  "maturity": "stable",
+  "created": "2025-07-12T10:00:00Z",
+  "updated": "2025-07-12T10:00:00Z",
+  "source": {
+    "type": "git",
+    "url": "https://github.com/vyges/pwm-controller",
+    "commit": "main",
+    "private": false,
+    "containsEncryptedPayload": false,
+    "indexing": true
+  },
+  "maintainers": [
+    {
+      "name": "Vyges IP Development Team",
+      "email": "team@vyges.com",
+      "github": "vyges"
+    }
+  ],
+  "branding": {
+    "provider": "Vyges",
+    "logo": "https://vyges.com/images/logo.svg",
+    "website": "https://vyges.com/catalog/pwm-controller",
+    "usage": "Use of the logo is permitted for attribution or compatibility references only."
+  },
+  "interfaces": [
+    {
+      "type": "bus",
+      "direction": "input",
+      "protocol": "APB4",
+      "width": 32,
+      "signals": [
+        { "name": "pclk_i", "direction": "input", "type": "clock", "description": "APB clock signal" },
+        { "name": "preset_n_i", "direction": "input", "type": "reset", "active_level": "low", "description": "APB reset signal" },
+        { "name": "psel_i", "direction": "input", "type": "control", "description": "APB select signal" },
+        { "name": "penable_i", "direction": "input", "type": "control", "description": "APB enable signal" },
+        { "name": "pwrite_i", "direction": "input", "type": "control", "description": "APB write enable" },
+        { "name": "paddr_i", "direction": "input", "width": 12, "type": "data", "description": "APB address bus" },
+        { "name": "pwdata_i", "direction": "input", "width": 32, "type": "data", "description": "APB write data" },
+        { "name": "prdata_o", "direction": "output", "width": 32, "type": "data", "description": "APB read data" },
+        { "name": "pready_o", "direction": "output", "type": "control", "description": "APB ready handshake" },
+        { "name": "pslverr_o", "direction": "output", "type": "control", "description": "APB transfer error" }
+      ]
+    },
+    {
+      "type": "pwm",
+      "direction": "output",
+      "signals": [
+        { "name": "pwm_o", "direction": "output", "width": 8, "type": "pwm", "description": "PWM output signals" },
+        { "name": "pwm_n_o", "direction": "output", "width": 8, "type": "pwm", "description": "Complementary PWM outputs" }
+      ]
+    },
+    {
+      "type": "control",
+      "direction": "input",
+      "signals": [
+        { "name": "sync_i", "direction": "input", "type": "sync", "description": "External synchronization input" },
+        { "name": "fault_i", "direction": "input", "type": "fault", "description": "External fault input" }
+      ]
+    },
+    {
+      "type": "status",
+      "direction": "output",
+      "signals": [
+        { "name": "sync_o", "direction": "output", "type": "sync", "description": "Synchronization output" },
+        { "name": "fault_o", "direction": "output", "type": "fault", "description": "Fault status output" },
+        { "name": "irq_o", "direction": "output", "type": "interrupt", "description": "Interrupt output" },
+        { "name": "busy_o", "direction": "output", "type": "status", "description": "Busy status" }
+      ]
+    }
+  ],
+  "parameters": [
+    {
+      "name": "NUM_CHANNELS",
+      "type": "int",
+      "default": 8,
+      "description": "Number of PWM channels",
+      "range": { "min": 1, "max": 8 },
+      "units": "channels",
+      "required": false
+    },
+    {
+      "name": "FREQ_WIDTH",
+      "type": "int",
+      "default": 24,
+      "description": "Width of frequency control register",
+      "range": { "min": 16, "max": 32 },
+      "units": "bits",
+      "required": false
+    },
+    {
+      "name": "DUTY_WIDTH",
+      "type": "int",
+      "default": 16,
+      "description": "Width of duty cycle control register",
+      "range": { "min": 12, "max": 20 },
+      "units": "bits",
+      "required": false
+    },
+    {
+      "name": "PHASE_WIDTH",
+      "type": "int",
+      "default": 16,
+      "description": "Width of phase control register",
+      "range": { "min": 12, "max": 20 },
+      "units": "bits",
+      "required": false
+    },
+    {
+      "name": "APB_ADDR_WIDTH",
+      "type": "int",
+      "default": 12,
+      "description": "Width of APB address bus",
+      "range": { "min": 8, "max": 16 },
+      "units": "bits",
+      "required": false
+    }
+  ],
+  "test": {
+    "coverage": true,
+    "testbenches": ["cocotb", "systemverilog"],
+    "simulators": ["verilator", "vcs", "modelsim"],
+    "status": "passing",
+    "coverage_goals": {
+      "functional": 95,
+      "code": 95,
+      "assertion": 90,
+      "branch": 90,
+      "expression": 85
+    }
+  },
+  "flows": {
+    "verilator": {
+      "status": "verified",
+      "version": "5.0+"
+    },
+    "openlane": {
+      "pdks": ["sky130B", "gf180mcuC"],
+      "status": "tested",
+      "clock_period": 10.0,
+      "target_frequency": 100
+    },
+    "vivado": {
+      "status": "verified",
+      "version": "2023.1+",
+      "boards": ["arty-a7-35", "nexys4", "zybo"]
+    },
+    "quartus": {
+      "status": "partial",
+      "version": "22.1+",
+      "boards": ["de10-nano", "de1-soc"]
+    }
+  },
+  "asic": {
+    "flavor": "digital",
+    "pdks": ["sky130B", "gf180mcuC", "tsmc28"],
+    "synthesis_tool": "openlane",
+    "clock_freq_mhz": 200,
+    "constraints": ["constraints.sdc"],
+    "tools": ["yosys", "openroad", "magic"],
+    "power_domains": {
+      "core": "1.2V",
+      "io": "1.8V/3.3V",
+      "pll": "1.2V"
+    }
+  },
+  "fpga": {
+    "toolchain": "vivado",
+    "board": "arty-a7-35",
+    "cfu_playground_compatible": true,
+    "constraints": ["constraints.xdc"],
+    "clock_freq_mhz": 150,
+    "resource_utilization": {
+      "lut": "<5000",
+      "ff": "<3000",
+      "dsp": "<10",
+      "bram": "<10"
+    }
+  },
+  "integration": {
+    "examples": [
+      {
+        "target": "simulation",
+        "wrapper": "integration/pwm_wrapper.v",
+        "tb": "integration/pwm_tb.v"
+      },
+      {
+        "target": "fpga",
+        "wrapper": "integration/fpga_wrapper.v",
+        "tb": "integration/fpga_tb.v"
+      },
+      {
+        "target": "chiplet",
+        "wrapper": "integration/chiplet_wrapper.v",
+        "tb": "integration/chiplet_tb.v"
+      }
+    ]
+  },
+  "automation": {
+    "automation_level": "enhanced",
+    "minimal_required": ["name", "version", "license", "interfaces", "template", "target", "design_type", "maturity", "description", "source", "asic", "fpga", "test", "flows"],
+    "recommended_for_automation": ["parameters", "dependencies", "toolRequirements", "performance", "reliability", "packaging", "community"],
+    "blocking_issues": []
+  },
+  "chiplet_ready": true,
+  "integration_level": "rtl",
+  "packaging_considerations": "2mm x 2mm die, 8x8 bump array, 130μm pitch",
+  "die_to_die_interfaces": ["APB4", "UCIe", "BoW"],
+  "interposer_constraints": {
+    "technology": "silicon",
+    "routing_layers": 4,
+    "pitch": "130μm",
+    "die_spacing": "2mm"
+  },
+  "bump_constraints": {
+    "pitch": "130μm",
+    "size": "80μm",
+    "array": "8x8",
+    "power_bumps": 16,
+    "signal_bumps": 48
+  },
+  "thermal_constraints": {
+    "power_limit": "50mW",
+    "junction_temp": "125°C",
+    "thermal_resistance": "20°C/W",
+    "cooling": "passive"
+  },
+  "multi_die_testing": {
+    "test_access": ["JTAG", "scan_chain"],
+    "coverage": "95%",
+    "test_vectors": "comprehensive"
+  },
+  "signal_conformance": {
+    "protocol": "APB4",
+    "verification": "formal",
+    "test_suite": "comprehensive"
+  },
+  "power_domains": {
+    "core": {
+      "voltage": "1.2V",
+      "isolation": "level_shifter",
+      "retention": "flip_flop",
+      "current_limit": "50mA"
+    },
+    "io": {
+      "voltage": "1.8V/3.3V",
+      "isolation": "io_cell",
+      "retention": "none",
+      "current_limit": "100mA"
+    },
+    "pll": {
+      "voltage": "1.2V",
+      "isolation": "analog",
+      "retention": "none",
+      "current_limit": "10mA"
+    }
+  },
+  "lifecycle": {
+    "origin": "vyges",
+    "trusted_fabricator": "tsmc",
+    "certifications": ["ISO9001", "ISO14001"],
+    "supply_chain": "tracked"
+  },
+  "meta": {
+    "template": {
+      "generator": "vyges-cli",
+      "init_tool": "vyges-cli",
+      "template_version": "1.0.0",
+      "generated_at": "2025-07-12T10:00:00Z"
+    },
+    "generated_by": "vyges-cli",
+    "schema": {
+      "version": "1.0.0",
+      "compatible_versions": ["1.0.0", "1.1.0"],
+      "generated_with": "vyges-cli"
+    }
+  },
+  "categories": ["peripheral", "controller", "pwm", "motor-control", "power-management"],
+  "tags": ["pwm", "motor-control", "power-management", "multi-channel", "precise-frequency", "chiplet-ready", "apb4", "pll", "dead-time", "fault-protection"],
+  "keywords": ["pwm", "pulse-width-modulation", "motor-control", "power-management", "frequency-control", "duty-cycle", "multi-channel", "chiplet", "apb4", "pll", "dead-time", "fault-protection", "synchronization", "phase-control"]
+} 
