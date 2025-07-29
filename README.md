@@ -52,5 +52,13 @@ vivado -mode batch -source create_project.tcl
 ## APB Register Map
 See `docs/PWM-Controller_design_spec.md` for full register and interface details.
 
+## License
+
+Apache-2.0 License - see [LICENSE](LICENSE) for details.
+
+**Important**: The Apache-2.0 license applies to the **hardware IP content** (RTL, documentation, testbenches, etc.) that you create using this template. The template structure, build processes, tooling workflows, and AI context/processing engine are provided as-is for your use but are not themselves licensed under Apache-2.0.
+
+For detailed licensing information, see [LICENSE_SCOPE.md](LICENSE_SCOPE.md).
+
 ## Support
 For questions, open an issue or contact the Vyges IP team.
