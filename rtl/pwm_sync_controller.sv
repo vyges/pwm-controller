@@ -140,7 +140,7 @@ module pwm_sync_controller (
     covergroup sync_coverage @(posedge pclk_i);
         sync_state_cp: coverpoint sync_state {
             bins idle = {SYNC_IDLE};
-            bins wait = {SYNC_WAIT};
+            bins waiting = {SYNC_WAIT};
             bins active = {SYNC_ACTIVE};
             bins complete = {SYNC_COMPLETE};
         }
